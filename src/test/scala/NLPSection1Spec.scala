@@ -17,5 +17,12 @@ class NLPSection1Spec extends Specification {
       }.mkString
       answer must_== "パトカー"
     }
+
+    "「パトカー」＋「タクシー」の文字を先頭から交互に連結して文字列「パタトクカシーー」を得よ．" >> {
+      val answer = ("パトカー" zip "タクシー").map {
+        case (a, b) => s"$a$b"
+      }.mkString
+      answer must_== "パタトクカシーー"
+    }
   }
 }
