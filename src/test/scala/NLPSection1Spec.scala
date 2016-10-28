@@ -1,13 +1,14 @@
 /**
   * Created by tomoya.igarashi.0510@gmail.com on 2016/10/27.
   */
+
 import org.specs2.mutable._
 
 class NLPSection1Spec extends Specification {
   "NLP 100 section1" >> {
     "文字列\"stressed\"の文字を逆に（末尾から先頭に向かって）並べた文字列を得よ．" >> {
       val answer = "stressed".reverse
-       answer must_== "desserts"
+      answer must_== "desserts"
     }
 
     "「パタトクカシーー」という文字列の1,3,5,7文字目を取り出して連結した文字列を得よ．" >> {
