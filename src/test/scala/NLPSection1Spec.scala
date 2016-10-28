@@ -12,9 +12,9 @@ class NLPSection1Spec extends Specification {
     }
 
     "「パタトクカシーー」という文字列の1,3,5,7文字目を取り出して連結した文字列を得よ．" >> {
-      val answer = "パタトクカシーー".zipWithIndex
-        .collect { case (c, i) if i % 2 == 0 => c }
-        .mkString
+      val answer = "パタトクカシーー".zipWithIndex.collect {
+        case (c, i) if i % 2 == 0 => c
+      }.mkString
       answer must_== "パトカー"
     }
   }
