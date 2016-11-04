@@ -25,7 +25,8 @@ class NLPSection1Spec extends Specification {
       answer must_== "パタトクカシーー"
     }
 
-    "\"Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics.\"という文を単語に分解し，各単語の（アルファベットの）文字数を先頭から出現順に並べたリストを作成せよ．" >> {
+    """"Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
+      |という文を単語に分解し，各単語の（アルファベットの）文字数を先頭から出現順に並べたリストを作成せよ．""".stripMargin >> {
       val answer = "Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
         .split(" ").map(_.count(_.isLetter)).mkString
       answer must_== "314159265358979"
