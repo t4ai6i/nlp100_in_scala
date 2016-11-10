@@ -45,5 +45,18 @@ class NLPSection1Spec extends Specification {
       }.toMap
       answer must_== Map("Cl" -> 16, "N" -> 6, "Be" -> 3, "F" -> 8, "Mi" -> 11, "Na" -> 10, "Ne" -> 9, "Ar" -> 17, "B" -> 4, "Li" -> 2, "P" -> 14, "He" -> 1, "Si" -> 13, "C" -> 5, "H" -> 0, "Ca" -> 19, "K" -> 18, "Al" -> 12, "O" -> 7, "S" -> 15)
     }
+
+    """与えられたシーケンス（文字列やリストなど）からn-gramを作る関数を作成せよ．
+      |この関数を用い，"I am an NLPer"という文から単語bi-gram，文字bi-gramを得よ．""".stripMargin >> {
+      def ngram[A](n: Int)(xs: Iterable[A]) = xs.sliding(n)
+      "文字bi-gram" >> {
+        val answer = ngram(2)("I am an NLPer").map(f => f.toString).toVector
+        answer must_== Vector("I ", " a", "am", "m ", " a", "an", "n ", " N", "NL", "LP", "Pe", "er")
+      }
+      "単語bi-gram" >> {
+        val answer = ngram(2)("I am an NLPer".split(" ")).map(f => f.toVector).toVector
+        answer must_== Vector(Vector("I", "am"), Vector("am", "an"), Vector("an", "NLPer"))
+      }
+    }
   }
 }
