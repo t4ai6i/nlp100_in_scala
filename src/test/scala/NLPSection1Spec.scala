@@ -7,6 +7,9 @@ import org.specs2.mutable._
 import scala.collection.immutable.TreeMap
 
 class NLPSection1Spec extends Specification {
+
+  def ngram[A](n: Int)(xs: Iterable[A]) = xs.sliding(n)
+
   "NLP 100 section1" >> {
     "文字列\"stressed\"の文字を逆に（末尾から先頭に向かって）並べた文字列を得よ．" >> {
       val answer = "stressed".reverse
@@ -48,7 +51,6 @@ class NLPSection1Spec extends Specification {
 
     """与えられたシーケンス（文字列やリストなど）からn-gramを作る関数を作成せよ．
       |この関数を用い，"I am an NLPer"という文から単語bi-gram，文字bi-gramを得よ．""".stripMargin >> {
-      def ngram[A](n: Int)(xs: Iterable[A]) = xs.sliding(n)
       "文字bi-gram" >> {
         val answer = ngram(2)("I am an NLPer").map(f => f.toString).toVector
         answer must_== Vector("I ", " a", "am", "m ", " a", "an", "n ", " N", "NL", "LP", "Pe", "er")
@@ -56,6 +58,31 @@ class NLPSection1Spec extends Specification {
       "単語bi-gram" >> {
         val answer = ngram(2)("I am an NLPer".split(" ")).map(f => f.toVector).toVector
         answer must_== Vector(Vector("I", "am"), Vector("am", "an"), Vector("an", "NLPer"))
+      }
+    }
+    """"paraparaparadise"と"paragraph"に含まれる文字bi-gramの集合を，それぞれ, XとYとして求め，XとYの和集合，積集合，差集合を求めよ．
+      |さらに，'se'というbi-gramがXおよびYに含まれるかどうかを調べよ．""".stripMargin >> {
+      val x = ngram[Char](2)("paraparaparadise").toSet
+      val y = ngram[Char](2)("paragraph").toSet
+      "和集合" >> {
+        val answer = (x union y).map(bi => bi.toString)
+        answer must_== Set("ph", "gr", "se", "di", "ad", "ra", "ap", "ar", "is", "pa", "ag")
+      }
+      "積集合" >> {
+        val answer = (x intersect y).map(bi => bi.toString)
+        answer must_== Set("ra", "ap", "ar", "pa")
+      }
+      "差集合" >> {
+        val answer = (x diff y).map(bi => bi.toString)
+        answer must_== Set("se", "di", "ad", "is")
+      }
+      "contains se in X" >> {
+        val answer = x.contains("se")
+        answer must_== true
+      }
+      "contains se not in Y" >> {
+        val answer = y.contains("se")
+        answer must_== false
       }
     }
   }
