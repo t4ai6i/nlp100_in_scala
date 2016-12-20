@@ -9,6 +9,7 @@ import scala.collection.immutable.TreeMap
 class NLPSection1Spec extends Specification {
 
   def ngram[A](n: Int)(xs: Iterable[A]) = xs.sliding(n)
+  def atXoclockYisZ(x: Int)(y: String)(z: Double) = s"${x}時の${y}は${z}"
 
   "NLP 100 section1" >> {
     "文字列\"stressed\"の文字を逆に（末尾から先頭に向かって）並べた文字列を得よ．" >> {
@@ -60,6 +61,7 @@ class NLPSection1Spec extends Specification {
         answer must_== Vector(Vector("I", "am"), Vector("am", "an"), Vector("an", "NLPer"))
       }
     }
+
     """"paraparaparadise"と"paragraph"に含まれる文字bi-gramの集合を，それぞれ, XとYとして求め，XとYの和集合，積集合，差集合を求めよ．
       |さらに，'se'というbi-gramがXおよびYに含まれるかどうかを調べよ．""".stripMargin >> {
       val x = ngram[Char](2)("paraparaparadise").toSet
@@ -84,6 +86,12 @@ class NLPSection1Spec extends Specification {
         val answer = y.contains("se")
         answer must_== false
       }
+    }
+
+    """引数x, y, zを受け取り「x時のyはz」という文字列を返す関数を実装せよ．
+      |さらに，x=12, y="気温", z=22.4として，実行結果を確認せよ．""".stripMargin >> {
+      val answer = atXoclockYisZ(12)("気温")(22.4)
+      answer must_== "12時の気温は22.4"
     }
   }
 }
