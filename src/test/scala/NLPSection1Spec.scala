@@ -10,6 +10,10 @@ class NLPSection1Spec extends Specification {
 
   def ngram[A](n: Int)(xs: Iterable[A]) = xs.sliding(n)
   def atXoclockYisZ(x: Int)(y: String)(z: Double) = s"${x}時の${y}は${z}"
+  def cipher(str: String) = str.toCharArray.map {
+    case c if c.isLower => (219 - c).toChar
+    case c => c
+  }.mkString
 
   "NLP 100 section1" >> {
     "00.文字列\"stressed\"の文字を逆に（末尾から先頭に向かって）並べた文字列を得よ．" >> {
@@ -92,6 +96,18 @@ class NLPSection1Spec extends Specification {
       |さらに，x=12, y="気温", z=22.4として，実行結果を確認せよ．""".stripMargin >> {
       val answer = atXoclockYisZ(12)("気温")(22.4)
       answer must_== "12時の気温は22.4"
+    }
+
+    """08.暗号文
+      |与えられた文字列の各文字を，以下の仕様で変換する関数cipherを実装せよ．
+      |英小文字ならば(219 - 文字コード)の文字に置換
+      |その他の文字はそのまま出力
+      |この関数を用い，英語のメッセージを暗号化・復号化せよ．
+    """.stripMargin >> {
+      val question = "This is a test."
+      val encode = cipher(question)
+      val answer = cipher(encode)
+      answer must_== question
     }
   }
 }
