@@ -16,10 +16,14 @@ scalacOptions ++= Seq(
   "-Ywarn-value-discard",
   "-Xelide-below", "ALL"
 )
+scalacOptions in Test ++= Seq("-Yrangepos")
 
-libraryDependencies ++= Seq(
+libraryDependencies ++= (Seq(
   "org.specs2" %% "specs2-core" % "3.7" % "test"
-)
+) ++ Seq( // scala-logging
+  "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
+  "ch.qos.logback" % "logback-classic" % "1.1.3"
+))
+
 initialCommands in console := "import scalaz._, Scalaz._"
 
-scalacOptions in Test ++= Seq("-Yrangepos")
