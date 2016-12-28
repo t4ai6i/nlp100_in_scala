@@ -23,6 +23,8 @@ libraryDependencies ++= (Seq(
 ) ++ Seq( // scala-logging
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "ch.qos.logback" % "logback-classic" % "1.1.3"
+) ++ Seq( // apache commons-io
+  "org.apache.commons" % "commons-io" % "1.3.2"
 ))
 
 initialCommands in console := "import scalaz._, Scalaz._"
