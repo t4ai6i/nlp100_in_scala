@@ -36,5 +36,17 @@ class NLPSection2Spec extends Specification with LazyLogging {
       )
       answer must_== 24
     }
+    "11. タブをスペースに置換" >> {
+      val answer = open(file)(
+        th => {
+          logger.error("error", th)
+          Vector.empty[String]
+        },
+        ite => {
+          ite.map(_.replaceAll("\t", " ")).toVector
+        }
+      ).head
+      answer must_== "高知県 江川崎 41 2013-08-12"
+    }
   }
 }
