@@ -14,7 +14,7 @@ import scala.util.control.Exception._
 
 class NLPSection2Spec extends Specification with LazyLogging {
 
-  def open[X](file: File, charset: Charset = StandardCharsets.UTF_8)(body: Iterator[String] => X) = {
+  private def open[X](file: File, charset: Charset = StandardCharsets.UTF_8)(body: Iterator[String] => X) = {
     val lineIterator = FileUtils.lineIterator(file, charset.toString)
     allCatch withApply { t =>
       throw t
@@ -23,6 +23,14 @@ class NLPSection2Spec extends Specification with LazyLogging {
     } apply {
       body(lineIterator.asScala.map(_.toString))
     }
+  }
+
+  private def splitColumn(file: File, separator: String) = open(file) { ite =>
+    val split = ite.map(_.split(separator).take(2))
+    val (xs, ys) = split.duplicate
+    val col1 = xs.map(_ (0)).toVector
+    val col2 = ys.map(_ (1)).toVector
+    (col1, col2)
   }
 
   private val filePath = "src/test/resources/hightemp.txt"
@@ -62,13 +70,16 @@ class NLPSection2Spec extends Specification with LazyLogging {
       val answer = (split._1 zip split._2).headOption
       answer must_== Some(("高知県", "江川崎"))
     }
-  }
-
-  private def splitColumn(file: File, separator: String) = open(file) { ite =>
-      val split = ite.map(_.split(separator).take(2))
-      val (xs, ys) = split.duplicate
-      val col1 = xs.map(_ (0)).toVector
-      val col2 = ys.map(_ (1)).toVector
-      (col1, col2)
+    "13. col1.txtとcol2.txtをマージ" >> {
+      val zipped = allCatch withApply { th =>
+        logger.error("error", th)
+        Vector.empty[String]
+      } apply {
+        val (col1, col2) = splitColumn(file, "\t")
+        (col1 zip col2).map { zip => s"${zip._1}\t${zip._2}" }
+      }
+      val answer = zipped.headOption
+      answer must_== Some("高知県\t江川崎")
+    }
   }
 }
