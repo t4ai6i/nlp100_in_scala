@@ -57,16 +57,18 @@ class NLPSection2Spec extends Specification with LazyLogging {
         logger.error("error", th)
         (Vector.empty[String], Vector.empty[String])
       } apply {
-        open(file) { ite =>
-          val split = ite.map(_.split("\t").take(2))
-          val (xs, ys) = split.duplicate
-          val col1 = xs.map(_ (0)).toVector
-          val col2 = ys.map(_ (1)).toVector
-          (col1, col2)
-        }
+        splitColumn(file, "\t")
       }
       val answer = (split._1 zip split._2).headOption
       answer must_== Some(("高知県", "江川崎"))
     }
+  }
+
+  private def splitColumn(file: File, separator: String) = open(file) { ite =>
+      val split = ite.map(_.split(separator).take(2))
+      val (xs, ys) = split.duplicate
+      val col1 = xs.map(_ (0)).toVector
+      val col2 = ys.map(_ (1)).toVector
+      (col1, col2)
   }
 }
