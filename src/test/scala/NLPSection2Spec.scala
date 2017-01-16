@@ -93,5 +93,20 @@ class NLPSection2Spec extends Specification with LazyLogging {
       }
       answer must_== Vector("高知県	江川崎	41	2013-08-12", "埼玉県	熊谷	40.9	2007-08-16")
     }
+    "15. 末尾のN行を出力" >> {
+      val n = 2
+      val answer = allCatch withApply { th =>
+        logger.error("error", th)
+        Vector.empty[String]
+      } apply {
+        open(file) { ite =>
+          val(ite1, ite2) = ite.duplicate
+          val length = ite1.length
+          val tail = length - n
+          ite2.drop(tail).toVector
+        }
+      }
+      answer must_== Vector("山形県	鶴岡	39.9	1978-08-03", "愛知県	名古屋	39.9	1942-08-02")
+    }
   }
 }
