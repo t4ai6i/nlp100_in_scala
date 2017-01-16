@@ -81,5 +81,17 @@ class NLPSection2Spec extends Specification with LazyLogging {
       val answer = zipped.headOption
       answer must_== Some("高知県\t江川崎")
     }
+    "14. 先頭からN行を出力" >> {
+      val n = 2
+      val answer = allCatch withApply { th =>
+        logger.error("error", th)
+        Vector.empty[String]
+      } apply {
+        open(file) { ite =>
+          ite.take(n).toVector
+        }
+      }
+      answer must_== Vector("高知県	江川崎	41	2013-08-12", "埼玉県	熊谷	40.9	2007-08-16")
+    }
   }
 }
