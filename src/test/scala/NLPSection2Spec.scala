@@ -33,6 +33,8 @@ class NLPSection2Spec extends Specification with LazyLogging {
     (col1, col2)
   }
 
+  private def divmod(x: Int, y: Int) = (x / y, x % y)
+
   private val filePath = "src/test/resources/hightemp.txt"
   private val file = new File(filePath)
 
@@ -107,6 +109,26 @@ class NLPSection2Spec extends Specification with LazyLogging {
         }
       }
       answer must_== Vector("山形県	鶴岡	39.9	1978-08-03", "愛知県	名古屋	39.9	1942-08-02")
+    }
+    "16. ファイルをN分割する" >> {
+      val n = 5
+      val split = allCatch withApply { th =>
+        logger.error("error", th)
+        Vector.empty[Vector[String]]
+      } apply {
+        open(file) { ite =>
+          val(ite1, ite2) = ite.duplicate
+          val length = ite1.length
+          val (quotient, rest) = divmod(length, n)
+          val N = (rest == 0) match {
+            case true => quotient
+            case false => quotient + 1
+          }
+          (0 until n).map { _ => ite2.take(N).toVector }.toVector
+        }
+      }
+      val answer = split.map(_.head)
+      answer must_== Vector("高知県	江川崎	41	2013-08-12", "和歌山県	かつらぎ	40.6	1994-08-08", "群馬県	上里見	40.3	1998-07-04", "山形県	酒田	40.1	1978-08-03", "大阪府	豊中	39.9	1994-08-08")
     }
   }
 }
