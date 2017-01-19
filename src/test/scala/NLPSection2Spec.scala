@@ -112,5 +112,12 @@ class NLPSection2Spec extends Specification with LazyLogging {
       val answer = sorted.map(_.split("\t").apply(2).toDouble)
       answer must_== Vector(41.0, 40.9, 40.9, 40.8, 40.7, 40.6, 40.6, 40.5, 40.4, 40.3, 40.3, 40.3, 40.2, 40.2, 40.2, 40.1, 40.0, 40.0, 39.9, 39.9, 39.9, 39.9, 39.9, 39.9)
     }
+    "19. 各行の1コラム目の文字列の出現頻度を求め，出現頻度の高い順に並べる" >> {
+      val answer = open(file) { ite =>
+        val grouped = ite.map(_.split("\t")(0)).toVector.groupBy(identity)
+        grouped.map(t => (t._1, t._2.length)).toIndexedSeq.sortWith((t1, t2) => t1._2 > t2._2)
+      }
+      answer must_== Vector(("埼玉県", 3), ("群馬県", 3), ("山梨県", 3), ("山形県", 3), ("愛知県", 2), ("千葉県", 2), ("岐阜県", 2), ("静岡県", 2), ("高知県", 1), ("愛媛県", 1), ("大阪府", 1), ("和歌山県", 1))
+    }
   }
 }
