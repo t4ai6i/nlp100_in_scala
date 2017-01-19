@@ -73,7 +73,7 @@ class NLPSection2Spec extends Specification with LazyLogging {
     "15. 末尾のN行を出力" >> {
       val n = 2
       val answer = open(file) { ite =>
-        val(ite1, ite2) = ite.duplicate
+        val (ite1, ite2) = ite.duplicate
         val length = ite1.length
         val tail = length - n
         ite2.drop(tail).toVector
@@ -83,7 +83,7 @@ class NLPSection2Spec extends Specification with LazyLogging {
     "16. ファイルをN分割する" >> {
       val n = 5
       val split = open(file) { ite =>
-        val(ite1, ite2) = ite.duplicate
+        val (ite1, ite2) = ite.duplicate
         val length = ite1.length
         val (quotient, rest) = divmod(length, n)
         val N = (rest == 0) match {
