@@ -101,5 +101,16 @@ class NLPSection2Spec extends Specification with LazyLogging {
       }
       answer must_== Set("高知県", "愛媛県", "愛知県", "埼玉県", "群馬県", "千葉県", "山梨県", "大阪府", "山形県", "和歌山県", "岐阜県", "静岡県")
     }
+    "18. 各行を3コラム目の数値の降順にソート" >> {
+      val sorted = open(file) { ite =>
+        ite.map { str =>
+          str.split("\t") match {
+            case Array(a, b, c, d) => (c.toDouble, s"${a}\t${b}\t${c}\t${d}")
+          }
+        }.toVector.sortWith((x, y) => x._1 > y._1).map(_._2)
+      }
+      val answer = sorted.map(_.split("\t").apply(2).toDouble)
+      answer must_== Vector(41.0, 40.9, 40.9, 40.8, 40.7, 40.6, 40.6, 40.5, 40.4, 40.3, 40.3, 40.3, 40.2, 40.2, 40.2, 40.1, 40.0, 40.0, 39.9, 39.9, 39.9, 39.9, 39.9, 39.9)
+    }
   }
 }
