@@ -95,5 +95,11 @@ class NLPSection2Spec extends Specification with LazyLogging {
       val answer = split.map(_.head)
       answer must_== Vector("高知県	江川崎	41	2013-08-12", "和歌山県	かつらぎ	40.6	1994-08-08", "群馬県	上里見	40.3	1998-07-04", "山形県	酒田	40.1	1978-08-03", "大阪府	豊中	39.9	1994-08-08")
     }
+    "17. １列目の文字列の異なり" >> {
+      val answer = open(file) { ite =>
+        ite.map(_.split("\t").head).toSet
+      }
+      answer must_== Set("高知県", "愛媛県", "愛知県", "埼玉県", "群馬県", "千葉県", "山梨県", "大阪府", "山形県", "和歌山県", "岐阜県", "静岡県")
+    }
   }
 }
