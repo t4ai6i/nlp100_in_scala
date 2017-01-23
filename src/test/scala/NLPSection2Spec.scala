@@ -2,28 +2,15 @@
   * Created by tomoya.igarashi.0510@gmail.com on 2016/10/27.
   */
 
+import com.typesafe.scalalogging.LazyLogging
+
+import com.example.Utils._
+
 import java.io.File
 
-import com.typesafe.scalalogging.LazyLogging
-import org.apache.commons.io.{FileUtils, LineIterator}
 import org.specs2.mutable._
-import java.nio.charset.{Charset, StandardCharsets}
-
-import scala.collection.JavaConverters._
-import scala.util.control.Exception._
 
 class NLPSection2Spec extends Specification with LazyLogging {
-
-  private def open[X](file: File, charset: Charset = StandardCharsets.UTF_8)(body: Iterator[String] => X) = {
-    val lineIterator = FileUtils.lineIterator(file, charset.toString)
-    allCatch withApply { t =>
-      throw t
-    } andFinally {
-      LineIterator.closeQuietly(lineIterator)
-    } apply {
-      body(lineIterator.asScala.map(_.toString))
-    }
-  }
 
   private def splitColumn(file: File, separator: String) = open(file) { ite =>
     val split = ite.map(_.split(separator).take(2))
