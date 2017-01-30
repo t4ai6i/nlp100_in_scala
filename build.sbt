@@ -25,6 +25,8 @@ libraryDependencies ++= (Seq(
   "ch.qos.logback" % "logback-classic" % "1.1.3"
 ) ++ Seq( // apache commons-io
   "org.apache.commons" % "commons-io" % "1.3.2"
+) ++ Seq( // typesafe playframework json
+  "com.typesafe.play" %% "play-json" % "2.5.10"
 ))
 
 initialCommands in console := "import scalaz._, Scalaz._"

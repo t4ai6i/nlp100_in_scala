@@ -1,9 +1,9 @@
 package com.example
 
 import org.apache.commons.io.{FileUtils, LineIterator}
-
-import java.io.File
+import java.io._
 import java.nio.charset.{Charset, StandardCharsets}
+import java.util.zip.ZipInputStream
 
 import scala.collection.JavaConverters._
 import scala.util.control.Exception._
@@ -24,4 +24,43 @@ object Utils {
     }
   }
 
+  def write(file: File, ite: Iterator[String])(body: (String, BufferedWriter) => Unit) = {
+    val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))
+    allCatch withApply { t =>
+      throw t
+    } andFinally {
+      writer.close()
+    } apply {
+      ite.takeWhile(_ => ite.hasNext).foreach { _ =>
+        body(ite.next(), writer)
+      }
+      writer.flush()
+    }
+  }
+
+  def unzip(zipFile: File) = {
+    val zis = new ZipInputStream(new FileInputStream(zipFile))
+    allCatch withApply { t =>
+      throw t
+    } andFinally {
+      zis.closeEntry()
+      zis.close()
+    } apply {
+      val buffer = new Array[Byte](1024)
+      val zes = Iterator.continually(zis.getNextEntry).takeWhile(_ != null)
+      for {
+        ze <- zes
+      } yield {
+        val file = ze.getName
+        ze.isDirectory
+        ze.getComment
+        ze.getCompressedSize
+        ze.toString
+        val fos = new FileOutputStream(file);
+        Iterator.continually(zis.read(buffer)).takeWhile(_ > 0).foreach { len =>
+          fos.write(buffer, 0, len)
+        }
+      }
+    }
+  }
 }
