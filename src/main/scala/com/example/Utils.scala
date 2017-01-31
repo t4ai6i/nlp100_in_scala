@@ -24,16 +24,18 @@ object Utils {
     }
   }
 
-  def write(bw: BufferedWriter, ite: Iterator[String])(body: (String, BufferedWriter) => Unit) = {
-    allCatch withApply { t =>
-      throw t
-    } andFinally {
-      bw.close()
-    } apply {
-      ite.takeWhile(_ => ite.hasNext).foreach { _ =>
-        body(ite.next(), bw)
+  def write(read: File, bw: BufferedWriter)(body: (String, BufferedWriter) => Unit) = {
+    file2iterator(read) { ite =>
+      allCatch withApply { t =>
+        throw t
+      } andFinally {
+        bw.close()
+      } apply {
+        ite.takeWhile(_ => ite.hasNext).foreach { _ =>
+          body(ite.next(), bw)
+        }
+        bw.flush()
       }
-      bw.flush()
     }
   }
 
