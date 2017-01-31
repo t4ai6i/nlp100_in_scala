@@ -24,7 +24,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
     }
 
     "20. JSONデータの読み込み" >> pending {
-      val answer = open(engFile) { ite =>
+      val answer = file2iterator(engFile) { ite =>
         ite.length
       }
       answer must_== 24

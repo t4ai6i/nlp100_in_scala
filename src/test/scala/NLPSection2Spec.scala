@@ -12,7 +12,7 @@ import org.specs2.mutable._
 
 class NLPSection2Spec extends Specification with LazyLogging {
 
-  private def splitColumn(file: File, separator: String) = open(file) { ite =>
+  private def splitColumn(file: File, separator: String) = file2iterator(file) { ite =>
     val split = ite.map(_.split(separator).take(2))
     val (xs, ys) = split.duplicate
     val col1 = xs.map(_ (0)).toVector
@@ -27,13 +27,13 @@ class NLPSection2Spec extends Specification with LazyLogging {
 
   "NLP 100 section2" >> {
     "10. 行数のカウント" >> {
-      val answer = open(file) { ite =>
+      val answer = file2iterator(file) { ite =>
         ite.length
       }
       answer must_== 24
     }
     "11. タブをスペースに置換" >> {
-      val xs = open(file) { ite =>
+      val xs = file2iterator(file) { ite =>
         ite.map(_.replaceAll("\t", " ")).toVector
       }
       val answer = xs.headOption
@@ -52,14 +52,14 @@ class NLPSection2Spec extends Specification with LazyLogging {
     }
     "14. 先頭からN行を出力" >> {
       val n = 2
-      val answer = open(file) { ite =>
+      val answer = file2iterator(file) { ite =>
         ite.take(n).toVector
       }
       answer must_== Vector("高知県	江川崎	41	2013-08-12", "埼玉県	熊谷	40.9	2007-08-16")
     }
     "15. 末尾のN行を出力" >> {
       val n = 2
-      val answer = open(file) { ite =>
+      val answer = file2iterator(file) { ite =>
         val (ite1, ite2) = ite.duplicate
         val length = ite1.length
         val tail = length - n
@@ -69,7 +69,7 @@ class NLPSection2Spec extends Specification with LazyLogging {
     }
     "16. ファイルをN分割する" >> {
       val n = 5
-      val split = open(file) { ite =>
+      val split = file2iterator(file) { ite =>
         val (ite1, ite2) = ite.duplicate
         val length = ite1.length
         val (quotient, rest) = divmod(length, n)
@@ -83,13 +83,13 @@ class NLPSection2Spec extends Specification with LazyLogging {
       answer must_== Vector("高知県	江川崎	41	2013-08-12", "和歌山県	かつらぎ	40.6	1994-08-08", "群馬県	上里見	40.3	1998-07-04", "山形県	酒田	40.1	1978-08-03", "大阪府	豊中	39.9	1994-08-08")
     }
     "17. １列目の文字列の異なり" >> {
-      val answer = open(file) { ite =>
+      val answer = file2iterator(file) { ite =>
         ite.map(_.split("\t").head).toSet
       }
       answer must_== Set("高知県", "愛媛県", "愛知県", "埼玉県", "群馬県", "千葉県", "山梨県", "大阪府", "山形県", "和歌山県", "岐阜県", "静岡県")
     }
     "18. 各行を3コラム目の数値の降順にソート" >> {
-      val sorted = open(file) { ite =>
+      val sorted = file2iterator(file) { ite =>
         ite.map { str =>
           str.split("\t") match {
             case Array(a, b, c, d) => (c.toDouble, s"${a}\t${b}\t${c}\t${d}")
@@ -100,7 +100,7 @@ class NLPSection2Spec extends Specification with LazyLogging {
       answer must_== Vector(41.0, 40.9, 40.9, 40.8, 40.7, 40.6, 40.6, 40.5, 40.4, 40.3, 40.3, 40.3, 40.2, 40.2, 40.2, 40.1, 40.0, 40.0, 39.9, 39.9, 39.9, 39.9, 39.9, 39.9)
     }
     "19. 各行の1コラム目の文字列の出現頻度を求め，出現頻度の高い順に並べる" >> {
-      val answer = open(file) { ite =>
+      val answer = file2iterator(file) { ite =>
         val grouped = ite.map(_.split("\t")(0)).toVector.groupBy(identity)
         grouped.map(t => (t._1, t._2.length)).toIndexedSeq.sortWith((t1, t2) => t1._2 > t2._2)
       }

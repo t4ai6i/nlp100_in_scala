@@ -13,7 +13,7 @@ import scala.util.control.Exception._
   */
 object Utils {
 
-  def open[X](file: File, charset: Charset = StandardCharsets.UTF_8)(body: Iterator[String] => X) = {
+  def file2iterator[X](file: File, charset: Charset = StandardCharsets.UTF_8)(body: Iterator[String] => X) = {
     val lineIterator = FileUtils.lineIterator(file, charset.toString)
     allCatch withApply { t =>
       throw t

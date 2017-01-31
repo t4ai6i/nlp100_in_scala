@@ -17,7 +17,7 @@ class UtilsSpec extends Specification with LazyLogging {
 
   "com.example.Utils" >> {
     "#open & #write" >> {
-      val lines = open(file) { ite =>
+      val lines = file2iterator(file) { ite =>
         val stringWriter = new StringWriter()
         val bufferedWriter = new BufferedWriter(stringWriter)
         write(bufferedWriter, ite) { (line, bw) =>
