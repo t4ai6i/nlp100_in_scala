@@ -4,30 +4,30 @@
 package com.example
 
 import com.typesafe.scalalogging.LazyLogging
-
-import java.io.File
+import java.io._
 
 import org.specs2.mutable._
-
+import util.Properties
 import Utils._
 
 class UtilsSpec extends Specification with LazyLogging {
 
   private val filePath = "src/test/resources/hightemp.txt"
   private val file = new File(filePath)
-  private val outFilePath = "src/test/resources/out.txt"
-  private val outFile = new File(outFilePath)
 
   "com.example.Utils" >> {
-    "#write" >> {
-      open(file) { ite =>
-        write(outFile, ite) { (line, bw) =>
+    "#open & #write" >> {
+      val lines = open(file) { ite =>
+        val stringWriter = new StringWriter()
+        val bufferedWriter = new BufferedWriter(stringWriter)
+        write(bufferedWriter, ite) { (line, bw) =>
           bw.write(line)
           bw.newLine()
         }
+        stringWriter.toString
       }
-      val answer = false
-      answer must_== false
+      val answer = lines.split(Properties.lineSeparator).head
+      answer must_== "埼玉県\t熊谷\t40.9\t2007-08-16"
     }
   }
 }

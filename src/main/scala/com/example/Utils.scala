@@ -24,17 +24,16 @@ object Utils {
     }
   }
 
-  def write(file: File, ite: Iterator[String])(body: (String, BufferedWriter) => Unit) = {
-    val writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))
+  def write(bw: BufferedWriter, ite: Iterator[String])(body: (String, BufferedWriter) => Unit) = {
     allCatch withApply { t =>
       throw t
     } andFinally {
-      writer.close()
+      bw.close()
     } apply {
       ite.takeWhile(_ => ite.hasNext).foreach { _ =>
-        body(ite.next(), writer)
+        body(ite.next(), bw)
       }
-      writer.flush()
+      bw.flush()
     }
   }
 
