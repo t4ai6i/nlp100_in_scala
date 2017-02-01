@@ -20,6 +20,8 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 
 libraryDependencies ++= (Seq(
   "org.specs2" %% "specs2-core" % "3.7" % "test"
+) ++ Seq( // scalaz
+  "org.scalaz" %% "scalaz-core" % "7.2.8"
 ) ++ Seq( // scala-logging
   "com.typesafe.scala-logging" %% "scala-logging" % "3.1.0",
   "ch.qos.logback" % "logback-classic" % "1.1.3"
@@ -28,6 +30,3 @@ libraryDependencies ++= (Seq(
 ) ++ Seq( // typesafe playframework json
   "com.typesafe.play" %% "play-json" % "2.5.10"
 ))
-
-initialCommands in console := "import scalaz._, Scalaz._"
-
