@@ -39,6 +39,21 @@ object Utils {
     }
   }
 
+  def bufferedReader2Writer(br: BufferedReader, bw: BufferedWriter)(body: (String, BufferedWriter) => Unit) = {
+    allCatch withApply { t =>
+      throw t
+    } andFinally {
+      bw.close()
+      br.close()
+    } apply {
+      val lines = Iterator.continually(br.readLine()).takeWhile(_ != null)
+      for {
+        line <- lines
+      } {
+        body(line, bw)
+      }
+    }
+  }
   def unzip(zipFile: File) = {
     val zis = new ZipInputStream(new FileInputStream(zipFile))
     allCatch withApply { t =>

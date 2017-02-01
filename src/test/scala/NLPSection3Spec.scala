@@ -3,12 +3,13 @@
   */
 
 import com.typesafe.scalalogging.LazyLogging
-
 import com.example.Utils._
-
-import java.io.File
+import java.io._
+import java.util.zip.GZIPInputStream
 
 import org.specs2.mutable._
+
+import util.Properties
 
 class NLPSection3Spec extends Specification with LazyLogging {
 
@@ -19,7 +20,16 @@ class NLPSection3Spec extends Specification with LazyLogging {
 
   "NLP 100 section3" >> {
     "generate jawiki-england.json" >> {
-      val answer = false
+      val br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(gzFile))))
+      val sw = new StringWriter()
+      val bw = new BufferedWriter(sw)
+      //    val bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))
+      bufferedReader2Writer(br, bw) { (line, bw) =>
+        bw.write(line)
+        bw.newLine()
+      }
+      val lines = sw.toString
+      val answer = lines.split(Properties.lineSeparator).head
       answer must_== false
     }
 
