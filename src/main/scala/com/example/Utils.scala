@@ -52,6 +52,7 @@ object Utils {
       } {
         body(line, bw)
       }
+      bw.flush()
     }
   }
   def unzip(zipFile: File) = {
