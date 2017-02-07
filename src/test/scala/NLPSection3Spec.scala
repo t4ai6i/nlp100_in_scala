@@ -9,6 +9,9 @@ import java.util.zip.GZIPInputStream
 
 import org.specs2.mutable._
 
+import play.api.libs.json._
+import play.api.libs.functional.syntax._
+
 import scala.util.Properties._
 
 class NLPSection3Spec extends Specification with LazyLogging {
@@ -17,6 +20,26 @@ class NLPSection3Spec extends Specification with LazyLogging {
   private val gzFile = new File(gzFilePath)
   private val engFilePath = "src/test/resources/jawiki-england.json"
   private val engFile = new File(engFilePath)
+
+  case class Article(title: String, text: String)
+
+  implicit val locationFormat: Format[Article] = (
+    (JsPath \ "title").format[String] and
+      (JsPath \ "text").format[String]
+    ) (Article.apply, unlift(Article.unapply))
+
+  def iterator2Articles(ite: Iterator[String]): Iterator[Article] = {
+    val results = for {
+      str <- ite
+    } yield {
+      Json.parse(str).validate[Article]
+    }
+    for {
+      result <- results if result.isSuccess
+    } yield {
+      result.get
+    }
+  }
 
   "NLP 100 section3" >> {
     "20. JSONデータの読み込み" >> pending {
@@ -41,9 +64,17 @@ class NLPSection3Spec extends Specification with LazyLogging {
 
     "21. カテゴリ名を含む行を抽出" >> {
       val answer = file2iterator(engFile) { ite =>
-        ite.length
+        val articles = iterator2Articles(ite)
+        val categories = for {
+          article <- articles
+          lines = article.text.split(lineSeparator)
+          line <- lines if line.startsWith("[[Category:")
+        } yield {
+          line
+        }
+        categories.toVector
       }
-      answer must_== 24
+      answer must_== Vector("[[Category:イギリス|*]]", "[[Category:英連邦王国|*]]", "[[Category:G8加盟国]]", "[[Category:欧州連合加盟国]]", "[[Category:海洋国家]]", "[[Category:君主国]]", "[[Category:島国|くれいとふりてん]]", "[[Category:1801年に設立された州・地域]]")
     }
   }
 }
