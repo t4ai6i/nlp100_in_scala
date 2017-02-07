@@ -9,7 +9,7 @@ import java.util.zip.GZIPInputStream
 
 import org.specs2.mutable._
 
-import util.Properties
+import scala.util.Properties._
 
 class NLPSection3Spec extends Specification with LazyLogging {
 
@@ -19,21 +19,27 @@ class NLPSection3Spec extends Specification with LazyLogging {
   private val engFile = new File(engFilePath)
 
   "NLP 100 section3" >> {
-    "generate jawiki-england.json" >> {
+    "20. JSONデータの読み込み" >> pending {
       val br = new BufferedReader(new InputStreamReader(new GZIPInputStream(new FileInputStream(gzFile))))
       val sw = new StringWriter()
       val bw = new BufferedWriter(sw)
       //    val bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file)))
       bufferedReader2Writer(br, bw) { (line, bw) =>
-        bw.write(line)
-        bw.newLine()
+        val jsResult = Json.parse(line).validate[Article]
+        for {
+          article <- jsResult
+          title = article.title if title == "イギリス"
+        } {
+          bw.write(title)
+          bw.newLine()
+        }
       }
       val lines = sw.toString
-      val answer = lines.split(Properties.lineSeparator).head
-      answer must_== false
+      val answer = lines.split(lineSeparator).head
+      answer must_== "イギリス"
     }
 
-    "20. JSONデータの読み込み" >> pending {
+    "21. カテゴリ名を含む行を抽出" >> {
       val answer = file2iterator(engFile) { ite =>
         ite.length
       }
