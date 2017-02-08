@@ -76,5 +76,24 @@ class NLPSection3Spec extends Specification with LazyLogging {
       }
       answer must_== Vector("[[Category:イギリス|*]]", "[[Category:英連邦王国|*]]", "[[Category:G8加盟国]]", "[[Category:欧州連合加盟国]]", "[[Category:海洋国家]]", "[[Category:君主国]]", "[[Category:島国|くれいとふりてん]]", "[[Category:1801年に設立された州・地域]]")
     }
+
+    "22. カテゴリ名の抽出" >> {
+      val answer = file2iterator(engFile) { ite =>
+        val r = """\[\[Category:(.*)\]\]""".r
+        val articles = iterator2Articles(ite)
+        val names = for {
+          article <- articles
+          lines = article.text.split(lineSeparator)
+          line <- lines
+          matched = r.findFirstMatchIn(line)
+          matched <- matched
+          name = matched.group(1)
+        } yield {
+          name
+        }
+        names.toVector
+      }
+      answer must_== Vector("イギリス|*", "英連邦王国|*", "G8加盟国", "欧州連合加盟国", "海洋国家", "君主国", "島国|くれいとふりてん", "1801年に設立された州・地域")
+    }
   }
 }
