@@ -28,17 +28,22 @@ class NLPSection3Spec extends Specification with LazyLogging {
       (JsPath \ "text").format[String]
     ) (Article.apply, unlift(Article.unapply))
 
-  def iterator2Articles(ite: Iterator[String]): Iterator[Article] = {
-    val results = for {
+  def validatedArticles(ite: Iterator[String]): (Iterator[Article], Iterator[JsError]) = {
+    val xs = for {
       str <- ite
     } yield {
       Json.parse(str).validate[Article]
     }
-    for {
-      result <- results if result.isSuccess
+    val (ite1, ite2) = xs.duplicate
+    val articles = for {
+      r <- ite1 if r.isSuccess
+      opt = r.asOpt
+      article <- opt
     } yield {
-      result.get
+      article
     }
+    val errors = jsErrorIterator(ite2)
+    (articles, errors)
   }
 
   "NLP 100 section3" >> {
@@ -64,7 +69,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
 
     "21. カテゴリ名を含む行を抽出" >> {
       val answer = file2iterator(engFile) { ite =>
-        val articles = iterator2Articles(ite)
+        val (articles, _) = validatedArticles(ite)
         val categories = for {
           article <- articles
           lines = article.text.split(lineSeparator)
@@ -80,7 +85,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
     "22. カテゴリ名の抽出" >> {
       val answer = file2iterator(engFile) { ite =>
         val r = """\[\[Category:(.*)\]\]""".r
-        val articles = iterator2Articles(ite)
+        val (articles, _) = validatedArticles(ite)
         val names = for {
           article <- articles
           lines = article.text.split(lineSeparator)

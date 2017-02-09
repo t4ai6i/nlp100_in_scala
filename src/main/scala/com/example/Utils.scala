@@ -6,6 +6,8 @@ import java.nio.charset.{Charset, StandardCharsets}
 import java.util.zip.ZipInputStream
 
 import scala.collection.JavaConverters._
+
+import play.api.libs.json._
 import scala.util.control.Exception._
 
 /**
@@ -55,6 +57,7 @@ object Utils {
       bw.flush()
     }
   }
+
   def unzip(zipFile: File) = {
     val zis = new ZipInputStream(new FileInputStream(zipFile))
     allCatch withApply { t =>
@@ -79,5 +82,16 @@ object Utils {
         }
       }
     }
+  }
+
+  def jsErrorIterator[T](results: Iterator[JsResult[T]]): Iterator[JsError] = {
+    (for {
+      result <- results if result.isError
+    } yield {
+      result match {
+        case e: JsError => Some(e)
+        case _ => None
+      }
+    }).flatten
   }
 }
