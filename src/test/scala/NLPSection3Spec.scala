@@ -79,7 +79,10 @@ class NLPSection3Spec extends Specification with LazyLogging {
         }
         categories.toVector
       }
-      answer must_== Vector("[[Category:イギリス|*]]", "[[Category:英連邦王国|*]]", "[[Category:G8加盟国]]", "[[Category:欧州連合加盟国]]", "[[Category:海洋国家]]", "[[Category:君主国]]", "[[Category:島国|くれいとふりてん]]", "[[Category:1801年に設立された州・地域]]")
+      answer must_== Vector(
+        "[[Category:イギリス|*]]", "[[Category:英連邦王国|*]]", "[[Category:G8加盟国]]",
+        "[[Category:欧州連合加盟国]]", "[[Category:海洋国家]]", "[[Category:君主国]]",
+        "[[Category:島国|くれいとふりてん]]", "[[Category:1801年に設立された州・地域]]")
     }
 
     "22. カテゴリ名の抽出" >> {
@@ -98,7 +101,10 @@ class NLPSection3Spec extends Specification with LazyLogging {
         }
         names.toVector
       }
-      answer must_== Vector("イギリス|*", "英連邦王国|*", "G8加盟国", "欧州連合加盟国", "海洋国家", "君主国", "島国|くれいとふりてん", "1801年に設立された州・地域")
+      answer must_== Vector(
+        "イギリス|*", "英連邦王国|*", "G8加盟国", "欧州連合加盟国", "海洋国家", "君主国",
+        "島国|くれいとふりてん", "1801年に設立された州・地域")
+    }
     }
 
     "24. ファイル参照の抽出" >> {
