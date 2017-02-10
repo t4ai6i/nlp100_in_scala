@@ -84,7 +84,7 @@ object Utils {
     }
   }
 
-  def jsErrorIterator[T](results: Iterator[JsResult[T]]): Iterator[JsError] = {
+  def jsErrorIterator[_](results: Iterator[JsResult[_]]): Iterator[JsError] = {
     (for {
       result <- results if result.isError
     } yield {
