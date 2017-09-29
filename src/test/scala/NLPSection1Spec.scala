@@ -10,12 +10,15 @@ import scala.util.Random
 class NLPSection1Spec extends Specification with LazyLogging {
 
   def ngram[A](n: Int)(xs: Iterable[A]) = xs.sliding(n)
+
   def atXoclockYisZ(x: Int)(y: String)(z: Double) = s"${x}時の${y}は${z}"
+
   def cipher(str: String) = str.toCharArray.map {
     case c if c.isLower => (219 - c).toChar
     case c => c
   }.mkString
 
+  var expected: String = _
   "NLP 100 section1" >> {
     "00.文字列\"stressed\"の文字を逆に（末尾から先頭に向かって）並べた文字列を得よ．" >> {
       val answer = "stressed".reverse
@@ -23,17 +26,71 @@ class NLPSection1Spec extends Specification with LazyLogging {
     }
 
     "01.「パタトクカシーー」という文字列の1,3,5,7文字目を取り出して連結した文字列を得よ．" >> {
-      val answer = "パタトクカシーー".zipWithIndex.collect {
-        case (c, i) if i % 2 == 0 => c
-      }.mkString
-      answer must_== "パトカー"
+      val expected = "パトカー"
+      "#zipWithIndex" >> {
+        val answer = "パタトクカシーー".zipWithIndex.collect {
+          case (c, i) if i % 2 == 0 => c
+        }.mkString
+        answer must_== expected
+      }
+
+      "#foldLeft" >> {
+        val answer = "パタトクカシーー".foldLeft((true, "")) {
+          case ((true, str), c) => (false, str + c)
+          case ((false, str), _) => (true, str)
+        }._2
+        answer must_== expected
+      }
+
+      "Tail Recursive" >> {
+        def funcA(str: String): String = {
+          def recursive(str: String, flag: Boolean, acc: String): String = (str.isEmpty, flag) match {
+            case (true, _) => acc
+            case (_, true) => recursive(str.tail, false, acc + str.head)
+            case (_, false) => recursive(str.tail, true, acc)
+          }
+
+          recursive(str, true, "")
+        }
+
+        val answer = funcA("パタトクカシーー")
+        answer must_== expected
+      }
     }
 
     "02.「パトカー」＋「タクシー」の文字を先頭から交互に連結して文字列「パタトクカシーー」を得よ．" >> {
-      val answer = ("パトカー" zip "タクシー").map {
-        case (a, b) => s"$a$b"
-      }.mkString
-      answer must_== "パタトクカシーー"
+      val expected = "パタトクカシーー"
+      "#zip" >> {
+        val answer = ("パトカー" zip "タクシー").map {
+          case (a, b) => s"$a$b"
+        }.mkString
+        answer must_== expected
+      }
+
+      "#foldLeft" >> {
+        val answer = "パトカー".foldLeft(("", "タクシー")) { case ((acc, ys), c) =>
+          (acc + c + ys.head, ys.tail)
+        }._1.mkString
+        answer must_== expected
+      }
+
+      "Tail Recursive" >> {
+        def funcA(xs: Seq[Char], ys: Seq[Char]): String = {
+          def recursive(us: Seq[Char], vs: Seq[Char], acc: String): String = {
+            (us.isEmpty, vs.isEmpty) match {
+              case (true, true) => acc
+              case (true, false) => acc + vs.mkString
+              case (false, true) => acc + us.mkString
+              case _ => recursive(us.tail, vs.tail, acc + us.head + vs.head)
+            }
+          }
+
+          recursive(xs, ys, "")
+        }
+
+        val answer = funcA("パトカー", "タクシー")
+        answer must_== expected
+      }
     }
 
     """03."Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
