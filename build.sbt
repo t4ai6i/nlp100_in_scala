@@ -23,9 +23,6 @@ scalacOptions in (Compile, console) -= "-Ywarn-unused-import"
 
 libraryDependencies ++= (Seq(
   "org.specs2" %% "specs2-core" % "3.9.5" % "test"
-) ++ Seq( // scalatest
-  "org.scalactic" %% "scalactic" % "3.0.1",
-  "org.scalatest" %% "scalatest" % "3.0.1"
 ) ++ Seq( // scalaz
   "org.scalaz" %% "scalaz-core" % "7.2.8"
 ) ++ Seq( // scala-logging
