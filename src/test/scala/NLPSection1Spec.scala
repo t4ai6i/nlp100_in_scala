@@ -95,9 +95,22 @@ class NLPSection1Spec extends Specification with LazyLogging {
 
     """03."Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
       |という文を単語に分解し，各単語の（アルファベットの）文字数を先頭から出現順に並べたリストを作成せよ．""".stripMargin >> {
-      val answer = "Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
-        .split(" ").map(_.count(_.isLetter)).mkString
-      answer must_== "314159265358979"
+      val expected = Seq(3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5, 8, 9, 7, 9)
+      val string = "Now I need a drink, alcoholic of course, after the heavy lectures involving quantum mechanics."
+
+      "#map" >> {
+        val answer = string.split("""\W+""").map(_.length).toSeq
+        answer must_== expected
+      }
+
+      "for expression" >> {
+        val answer = (for {
+          xs <- string.split("""\W+""")
+        } yield {
+          xs.foldLeft(0) { case (acc, _) => acc + 1 }
+        }).toSeq
+        answer must_== expected
+      }
     }
 
     """04."Hi He Lied Because Boron Could Not Oxidize Fluorine. New Nations Might Also Sign Peace Security Clause. Arthur King Can."
