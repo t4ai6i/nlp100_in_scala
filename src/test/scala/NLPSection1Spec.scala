@@ -9,7 +9,7 @@ import scala.util.Random
 
 class NLPSection1Spec extends Specification with LazyLogging {
 
-  def ngram[A](n: Int)(xs: Iterable[A]) = xs.sliding(n)
+  def ngram[A](n: Int, xs: Iterable[A]) = xs.sliding(n)
 
   def atXoclockYisZ(x: Int)(y: String)(z: Double) = s"${x}時の${y}は${z}"
 
@@ -154,20 +154,65 @@ class NLPSection1Spec extends Specification with LazyLogging {
 
     """05.与えられたシーケンス（文字列やリストなど）からn-gramを作る関数を作成せよ．
       |この関数を用い，"I am an NLPer"という文から単語bi-gram，文字bi-gramを得よ．""".stripMargin >> {
+
+      "@kikou5656.tail recursive" >> {
+        def ngram(s: Seq[String], n: Int): Seq[String] = {
+          def fn(ss: Seq[Seq[String]], acc: Vector[String]): Vector[String] = {
+            if (ss.exists(_.isEmpty)) acc
+            else {
+              val t: String = ss.map(_.head).mkString
+              fn(ss.map(_.drop(1)), acc :+ t)
+            }
+          }
+
+          // 1要素ずつずらしたものを作成
+          val a = for {
+            i <- 1 to n
+          } yield s.drop(i - 1)
+
+          fn(a, Vector())
+        }
+
+        val a = ngram("hoge".toCharArray.map(_.toString).toSeq, 2)
+        a must_== Seq("ho", "og", "ge")
+
+        val b = ngram("hoge piyo huga".split(" "), 2)
+        b must_== Seq("hogepiyo", "piyohuga")
+      }
+
+      "@macorains.tail recursive" >> {
+        val s = "I am an NLPer"
+
+        def getCharNgram1(n: Int, src: String, acc: List[String]): List[String] = {
+          src match {
+            case s: String if s.length > n - 1 => {
+              getCharNgram1(n, src.drop(1), acc :+ src.take(n))
+            }
+            case _ => acc
+          }
+        }
+
+        val answer = getCharNgram1(2, s, List.empty[String])
+        val expected = List("I ", " a", "am", "m ", " a", "an", "n ", " N", "NL", "LP", "Pe", "er")
+        answer must_== expected
+      }
+
       "文字bi-gram" >> {
-        val answer = ngram(2)("I am an NLPer").map(f => f.toString).toVector
-        answer must_== Vector("I ", " a", "am", "m ", " a", "an", "n ", " N", "NL", "LP", "Pe", "er")
+        val expected = Seq("I ", " a", "am", "m ", " a", "an", "n ", " N", "NL", "LP", "Pe", "er")
+        val answer = ngram(2, "I am an NLPer").map(_.toString).toSeq
+        Seq(answer) must contain(===(expected))
       }
       "単語bi-gram" >> {
-        val answer = ngram(2)("I am an NLPer".split(" ")).map(f => f.toVector).toVector
-        answer must_== Vector(Vector("I", "am"), Vector("am", "an"), Vector("an", "NLPer"))
+        val expected = Seq(Seq("I", "am"), Seq("am", "an"), Seq("an", "NLPer"))
+        val answer = ngram(2, "I am an NLPer".split(" ")).map(_.toSeq).toSeq
+        Seq(answer) must contain(===(expected))
       }
     }
 
     """06."paraparaparadise"と"paragraph"に含まれる文字bi-gramの集合を，それぞれ, XとYとして求め，XとYの和集合，積集合，差集合を求めよ．
       |さらに，'se'というbi-gramがXおよびYに含まれるかどうかを調べよ．""".stripMargin >> {
-      val x = ngram[Char](2)("paraparaparadise").toSet
-      val y = ngram[Char](2)("paragraph").toSet
+      val x = ngram(2, "paraparaparadise").map(_.toString).toSet
+      val y = ngram(2, "paragraph").map(_.toString).toSet
       "和集合" >> {
         val answer = (x union y).map(bi => bi.toString)
         answer must_== Set("ph", "gr", "se", "di", "ad", "ra", "ap", "ar", "is", "pa", "ag")
