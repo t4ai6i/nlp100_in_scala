@@ -213,24 +213,30 @@ class NLPSection1Spec extends Specification with LazyLogging {
       val x = ngram(2, "paraparaparadise").map(_.toString).toSet
       val y = ngram(2, "paragraph").map(_.toString).toSet
       "和集合" >> {
+        val expected = Set("ph", "gr", "se", "di", "ad", "ra", "ap", "ar", "is", "pa", "ag")
         val answer = (x union y).map(bi => bi.toString)
-        answer must_== Set("ph", "gr", "se", "di", "ad", "ra", "ap", "ar", "is", "pa", "ag")
+        answer must_== expected
       }
       "積集合" >> {
+        val expected = Set("ra", "ap", "ar", "pa")
         val answer = (x intersect y).map(bi => bi.toString)
-        answer must_== Set("ra", "ap", "ar", "pa")
+        answer must_== expected
       }
       "差集合" >> {
+        val expected = Set("se", "di", "ad", "is")
         val answer = (x diff y).map(bi => bi.toString)
-        answer must_== Set("se", "di", "ad", "is")
+        answer must_== expected
+      }
+      "排他的論理和" >> {
+        val expected = Set("se", "di", "ad", "is", "ph", "gr", "ag")
+        val answer = ((x union y) diff (x intersect y)).map(bi => bi.toString)
+        answer must_== expected
       }
       "contains se in X" >> {
-        val answer = x.contains("se")
-        answer must_== true
+        x must contain("se")
       }
       "contains se not in Y" >> {
-        val answer = y.contains("se")
-        answer must_== false
+        y must not contain("se")
       }
     }
 
