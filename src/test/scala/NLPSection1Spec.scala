@@ -11,8 +11,6 @@ class NLPSection1Spec extends Specification with LazyLogging {
 
   def ngram[A](n: Int, xs: Iterable[A]) = xs.sliding(n)
 
-  def atXoclockYisZ(x: Int)(y: String)(z: Double) = s"${x}時の${y}は${z}"
-
   def cipher(str: String) = str.toCharArray.map {
     case c if c.isLower => (219 - c).toChar
     case c => c
@@ -242,8 +240,19 @@ class NLPSection1Spec extends Specification with LazyLogging {
 
     """07.引数x, y, zを受け取り「x時のyはz」という文字列を返す関数を実装せよ．
       |さらに，x=12, y="気温", z=22.4として，実行結果を確認せよ．""".stripMargin >> {
-      val answer = atXoclockYisZ(12)("気温")(22.4)
-      answer must_== "12時の気温は22.4"
+      def atXoclockYisZ(x: Int)(y: String)(z: Double) = s"${x}時の${y}は${z}"
+
+      "#1" >> {
+        val expected = "12時の気温は22.4"
+        val answer = atXoclockYisZ(12)("気温")(22.4)
+        answer must_== expected
+      }
+
+      "#2" >> {
+        val expected = "12時の気温は22.4"
+        val answer = atXoclockYisZ(_: Int)("気温")(22.4)
+        answer(12) must_== expected
+      }
     }
 
     """08.暗号文
