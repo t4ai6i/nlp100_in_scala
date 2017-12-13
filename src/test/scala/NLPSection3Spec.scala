@@ -29,20 +29,22 @@ class NLPSection3Spec extends Specification with LazyLogging {
     ) (Article.apply, unlift(Article.unapply))
 
   def validatedArticles(ite: Iterator[String]): (Iterator[Article], Iterator[JsError]) = {
-    val xs = for {
+    val jsResults = for {
       str <- ite
     } yield {
       Json.parse(str).validate[Article]
     }
-    val (ite1, ite2) = xs.duplicate
+    val (successes, failures) = jsResults.partition(x => x.isSuccess)
     val articles = for {
-      r <- ite1 if r.isSuccess
-      opt = r.asOpt
-      article <- opt
+      success <- successes
     } yield {
-      article
+      success.get
     }
-    val errors = jsErrorIterator(ite2)
+    val errors = for {
+      a <- failures
+    } yield {
+      JsError(a.asEither.left.get)
+    }
     (articles, errors)
   }
 

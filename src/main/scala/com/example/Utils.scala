@@ -7,7 +7,6 @@ import java.util.zip.ZipInputStream
 
 import scala.collection.JavaConverters._
 
-import play.api.libs.json._
 import scala.util.control.Exception._
 
 /**
@@ -82,16 +81,5 @@ object Utils {
         }
       }
     }
-  }
-
-  def jsErrorIterator[_](results: Iterator[JsResult[_]]): Iterator[JsError] = {
-    (for {
-      result <- results if result.isError
-    } yield {
-      result match {
-        case e: JsError => Some(e)
-        case _ => None
-      }
-    }).flatten
   }
 }
