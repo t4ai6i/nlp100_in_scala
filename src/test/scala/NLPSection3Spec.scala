@@ -41,9 +41,9 @@ class NLPSection3Spec extends Specification with LazyLogging {
       success.get
     }
     val errors = for {
-      a <- failures
+      failure <- failures
     } yield {
-      JsError(a.asEither.left.get)
+      JsError(failure.asEither.left.get)
     }
     (articles, errors)
   }
