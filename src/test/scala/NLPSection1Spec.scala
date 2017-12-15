@@ -272,14 +272,40 @@ class NLPSection1Spec extends Specification with LazyLogging {
       |"I couldn't believe that I could actually understand what I was reading : the phenomenal power of the human mind ."）
       |を与え，その実行結果を確認せよ．
     """.stripMargin >> {
-      val question = "I couldn't believe that I could actually understand what I was reading : the phenomenal power of the human mind ."
-      val answer = question.split("\\s+").map {
-        case w if w.length > 4 => w.head + Random.shuffle(w.substring(1, w.length - 1).toIterator).mkString + w.last
-        case w => w
-      }.mkString(" ")
 
-      logger.debug(answer)
-      true must_== true
+      val string = "I couldn't believe that I could actually understand what I was reading : the phenomenal power of the human mind ."
+
+      def typoglycemia(word: String): String = {
+        val head = word.head
+        val middle = Random.shuffle(word.substring(1, word.length - 1).toSeq).mkString
+        val last = word.last
+        head +: middle :+ last
+      }
+
+      "#map" >> {
+        val answer = string.split("""\s+""").map {
+          case w if w.length > 4 => typoglycemia(w)
+          case w => w
+        }.mkString(" ")
+
+        logger.debug(answer)
+        true must_== true
+      }
+
+      "for" >> {
+        def condition(word: String, num: Int): String = word match {
+          case w if w.length > num => typoglycemia(w)
+          case w => w
+        }
+        val answer = (for {
+          word <- string.split("""\s+""")
+        } yield {
+          condition(word, 4)
+        }).mkString(" ")
+
+        logger.debug(answer)
+        true must_== true
+      }
     }
   }
 }
