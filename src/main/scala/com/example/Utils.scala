@@ -1,28 +1,28 @@
 package com.example
 
-import org.apache.commons.io.{FileUtils, LineIterator}
+import org.apache.commons.io.FileUtils
 import java.io._
 import java.nio.charset.{Charset, StandardCharsets}
 import java.util.zip.ZipInputStream
 
 import scala.collection.JavaConverters._
-
+import scala.util.Try
 import scala.util.control.Exception._
 
 /**
   * Created by tomoya.igarashi.0510@gmail.com on 2017/01/22.
   */
 object Utils {
+  def file2iterator[T](file: File, charset: Charset = StandardCharsets.UTF_8)(body: Iterator[String] => T): Try[T] = Try {
+    type Closable = {def close(): Unit}
 
-  def file2iterator[X](file: File, charset: Charset = StandardCharsets.UTF_8)(body: Iterator[String] => X) = {
-    val lineIterator = FileUtils.lineIterator(file, charset.toString)
-    allCatch withApply { t =>
-      throw t
-    } andFinally {
-      LineIterator.closeQuietly(lineIterator)
-    } apply {
-      body(lineIterator.asScala.map(_.toString))
+    def using[A <: Closable, B](resource: A)(f: A => B) = try {
+      f(resource)
+    } finally {
+      resource.close
     }
+
+    using(FileUtils.lineIterator(file, charset.toString))(lineIterator => body(lineIterator.asScala))
   }
 
   def write(read: File, bw: BufferedWriter)(body: (String, BufferedWriter) => Unit) = {
