@@ -63,7 +63,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
     }
 
     "21. カテゴリ名を含む行を抽出" >> {
-      val answer = file2iterator(engFile) { ite =>
+      val tryVector = file2iterator(engFile) { ite =>
         val (_, articles) = validatedArticles(ite)
         val categories = for {
           article <- articles
@@ -74,6 +74,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
         }
         categories.toVector
       }
+      val answer = tryVector.get
       answer must_== Vector(
         "[[Category:イギリス|*]]", "[[Category:英連邦王国|*]]", "[[Category:G8加盟国]]",
         "[[Category:欧州連合加盟国]]", "[[Category:海洋国家]]", "[[Category:君主国]]",
@@ -81,7 +82,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
     }
 
     "22. カテゴリ名の抽出" >> {
-      val answer = file2iterator(engFile) { ite =>
+      val tryVector = file2iterator(engFile) { ite =>
         val r = """\[\[Category:(.*)\]\]""".r
         val (_, articles) = validatedArticles(ite)
         val names = for {
@@ -96,13 +97,14 @@ class NLPSection3Spec extends Specification with LazyLogging {
         }
         names.toVector
       }
+      val answer = tryVector.get
       answer must_== Vector(
         "イギリス|*", "英連邦王国|*", "G8加盟国", "欧州連合加盟国", "海洋国家", "君主国",
         "島国|くれいとふりてん", "1801年に設立された州・地域")
     }
 
     "23. セクション構造" >> {
-      val answer = file2iterator(engFile) { ite =>
+      val tryVector = file2iterator(engFile) { ite =>
         val r = """^(=+)\s*(.*?)\s*(=+)$""".r
         val (_, articles) = validatedArticles(ite)
         val sections = for {
@@ -118,6 +120,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
         }
         sections.toVector
       }
+      val answer = tryVector.get
       answer must_== Vector(
         ("国名", 2), ("歴史", 2), ("地理", 2), ("気候", 3), ("政治", 2), ("外交と軍事", 2), ("地方行政区分", 2),
         ("主要都市", 3), ("科学技術", 2), ("経済", 2), ("鉱業", 3), ("農業", 3), ("貿易", 3), ("通貨", 3),
@@ -129,7 +132,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
     }
 
     "24. ファイル参照の抽出" >> {
-      val answer = file2iterator(engFile) { ite =>
+      val tryVector = file2iterator(engFile) { ite =>
         val r = """(File|ファイル):(.*?)\|""".r
         val (_, articles) = validatedArticles(ite)
         val names = for {
@@ -144,6 +147,7 @@ class NLPSection3Spec extends Specification with LazyLogging {
         }
         names.toVector
       }
+      val answer = tryVector.get
       answer must_== Vector(
         "Royal Coat of Arms of the United Kingdom.svg",
         "Battle of Waterloo 1815.PNG",
