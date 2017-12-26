@@ -10,6 +10,9 @@
 .idea/vcs.xml
 .idea/jsLibraryMappings.xml
 .idea/modules/nlp100_in_scala.iml
+.idea/modules/nlp100_in_scala-build.iml
+.idea/misc.xml
+
 
 # Sensitive or high-churn files:
 .idea/dataSources.ids
