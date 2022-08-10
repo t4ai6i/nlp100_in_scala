@@ -10,7 +10,7 @@ import scala.util.Try
 import scala.util.control.Exception._
 
 /**
-  * Created by tomoya.igarashi.0510@gmail.com on 2017/01/22.
+  * Created by t4ai6i on 2017/01/22.
   */
 object Utils {
   def file2iterator[T](file: File, charset: Charset = StandardCharsets.UTF_8)(body: Iterator[String] => T): Try[T] = Try {
