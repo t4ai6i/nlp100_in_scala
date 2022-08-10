@@ -1,5 +1,5 @@
 /**
-  * Created by tomoya.igarashi.0510@gmail.com on 2017/01/22.
+  * Created by t4ai6i on 2017/01/22.
   */
 
 import com.typesafe.scalalogging.LazyLogging
